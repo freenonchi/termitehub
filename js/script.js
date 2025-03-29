@@ -14,6 +14,71 @@ document.addEventListener('DOMContentLoaded', function() {
         // Fallback for browsers that block window.close()
         window.location.href = 'about:blank';
     };
+
+    // Wait for full DOM load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded"); // Debug confirmation
+    
+    // Get elements with null checks
+    const splashScreen = document.getElementById('splashScreen');
+    const mainContent = document.getElementById('mainContent');
+    const enterButton = document.getElementById('enterButton');
+    const exitButton = document.getElementById('exitButton');
+
+    // Debug: Verify elements exist
+    if (!splashScreen || !mainContent || !enterButton || !exitButton) {
+        console.error("Critical elements missing!");
+        if (!splashScreen) console.error("splashScreen not found");
+        if (!mainContent) console.error("mainContent not found");
+        if (!enterButton) console.error("enterButton not found");
+        if (!exitButton) console.error("exitButton not found");
+        return;
+    }
+
+    // Show splash screen initially
+    splashScreen.style.display = 'flex';
+    mainContent.style.display = 'none';
+
+    // Improved enter button handler
+    enterButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log("Enter button clicked");
+        splashScreen.style.display = 'none';
+        mainContent.style.display = 'block';
+        
+        // Force redraw for some browsers
+        void splashScreen.offsetHeight;
+    });
+
+    // More reliable exit button handler
+    exitButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log("Exit button clicked");
+        
+        // Try closing window
+        if (window.close()) {
+            return;
+        }
+        
+        // Fallback options
+        try {
+            // Try redirecting
+            window.location.href = 'about:blank';
+            
+            // Final fallback
+            setTimeout(() => {
+                document.body.innerHTML = `
+                    <div style="text-align:center;padding:50px;background:#1e1e1e;color:#e0e0e0;height:100vh;">
+                        <h1>🐜 Termites ate your exit attempt!</h1>
+                        <p>Try closing the tab manually</p>
+                    </div>
+                `;
+            }, 1000);
+        } catch (err) {
+            console.error("Exit failed:", err);
+        }
+    });
+});
     
     // Social media links
     const socialLinks = {
